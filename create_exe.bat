@@ -3,73 +3,79 @@ chcp 65001 > nul
 title NEO ANALYZER - BUILD EXE
 
 echo.
-echo ╔══════════════════════════════════════════════════════════════╗
-echo ║                                                              ║
-echo ║     ◤◢◣◥                                                    ║
-echo ║    ◢ RDNK ◣              NEO ANALYZER                       ║
-echo ║    ◥████◤               BUILD SYSTEM v3.0                   ║
-echo ║     ◣◥◢◤                                                    ║
-echo ║                                                              ║
-echo ╚══════════════════════════════════════════════════════════════╝
+echo.
+echo ██████╗░██████╗░███╗░░██╗██╗░░██╗  ░█████╗░░█████╗░░░░
+echo ██╔══██╗██╔══██╗████╗░██║██║░██╔╝  ██╔══██╗██╔══██╗░░░
+echo ██████╔╝██║░░██║██╔██╗██║█████═╝░  ██║░░╚═╝██║░░██║░░░
+echo ██╔══██╗██║░░██║██║╚████║██╔═██╗░  ██║░░██╗██║░░██║░░░
+echo ██║░░██║██████╔╝██║░╚███║██║░╚██╗  ╚█████╔╝╚█████╔╝██╗
+echo ╚═╝░░╚═╝╚═════╝░╚═╝░░╚══╝╚═╝░░╚═╝  ░╚════╝░░╚════╝░╚═╝
+echo.
+echo ===============================================
+echo     NEO ANALYZER - BUILD SYSTEM v3.0
+echo ===============================================
 echo.
 echo.
 
-echo [1/3] Проверка Python...
-python --version
+echo [1/4] Проверка Python...
+python --version > nul 2>&1
 if errorlevel 1 (
-    echo ❌ Python не установлен!
+    echo [ОШИБКА] Python не установлен!
+    echo Скачайте с https://python.org/downloads/
     pause
     exit /b 1
 )
+echo [OK] Python найден
 echo.
 
-echo [2/3] Проверка файла neo_analyzer.py...
-if not exist "neo_analyzer.py" (
-    echo ❌ Файл neo_analyzer.py не найден!
-    pause
-    exit /b 1
+echo [2/4] Проверка файла neo_analyzer_v3.py...
+if not exist "neo_analyzer_v3.py" (
+    if exist "neo_analyzer.py" (
+        echo [OK] Найден neo_analyzer.py, переименовываю...
+        rename neo_analyzer.py neo_analyzer_v3.py
+    ) else (
+        echo [ОШИБКА] Файл neo_analyzer_v3.py не найден!
+        pause
+        exit /b 1
+    )
 )
-echo ✅ Файл найден
+echo [OK] Файл найден
 echo.
 
-echo [3/3] Сборка EXE (через Python)...
-echo Это займет 1-2 минуты, подождите...
+echo [3/4] Установка PyInstaller (если нужно)...
+pip show pyinstaller > nul 2>&1
+if errorlevel 1 (
+    echo Установка PyInstaller...
+    pip install pyinstaller
+)
+echo [OK] PyInstaller готов
 echo.
 
-python -m PyInstaller --onefile --console --name "NeoAnalyzer" --clean --noconfirm neo_analyzer.py
+echo [4/4] Сборка EXE (1-2 минуты)...
+echo.
+python -m PyInstaller --onefile --console --name "NeoAnalyzer" --clean --noconfirm neo_analyzer_v3.py
 
 if errorlevel 1 (
     echo.
-    echo ❌ Ошибка сборки!
-    echo.
-    echo Попробуйте установить PyInstaller заново:
-    echo pip uninstall pyinstaller -y
-    echo pip install pyinstaller
+    echo [ОШИБКА] Сборка не удалась!
     pause
     exit /b 1
 )
 
 echo.
-echo ╔══════════════════════════════════════════════════════════════╗
-echo ║                                                              ║
-echo ║                     ✅ ГОТОВО!                              ║
-echo ║                                                              ║
-echo ║     Файл создан: dist\NeoAnalyzer.exe                       ║
-echo ║                                                              ║
-echo ╚══════════════════════════════════════════════════════════════╝
+echo ===============================================
+echo                ГОТОВО!
+echo ===============================================
 echo.
-
-echo Открыть папку с программой?
+echo Файл создан: dist\NeoAnalyzer.exe
 echo.
-choice /c YN /n /m "Нажмите Y для открытия папки, N для выхода: "
-
-if errorlevel 2 goto :exit
-if errorlevel 1 goto :open
+echo Размер: примерно 8-12 МБ
+echo.
+echo ===============================================
+echo.
 
 :open
 explorer dist
-goto :exit
 
 :exit
-echo.
 pause

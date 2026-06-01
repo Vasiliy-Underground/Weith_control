@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['neo_analyzer.py'],
+    ['neo_analyzer_v3.py'],
     pathex=[],
     binaries=[],
     datas=[],
